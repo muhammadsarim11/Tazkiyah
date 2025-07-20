@@ -22,7 +22,7 @@ export const CreateNotes = catchAsync(async (req, res) => {
   // 4. Send success response
   return res.status(201).json({
     message: "Note created successfully!",
-    data: note,
+    data: note,  // <-- Note is in 'data' field
   });
 });
 

@@ -48,28 +48,36 @@ return res.status(200).json({
 
 
 export const updateTasbeeh = catchAsync( async(req,res)=>{
-
-    const {increment} = req.body
+    const {increment, title, goal} = req.body
+    console.log("Request body:", req.body); // Should see this
+    console.log("Tasbeeh ID:", req.params.id); // Should see this
+    
     const tasbeeh =  await Tasbeeh.findOne({_id:req.params.id , user:req.user.id})
-if(!tasbeeh){
-    return res.status(400).json({
-        message:"notasbeeh foundn for this user"
+    
+    if(!tasbeeh){
+        return res.status(404).json({
+            message:"no tasbeeh found for this user"
+        })
+    }
+
+    console.log("Before update - Count:", tasbeeh.count); // Should see this
+
+    if(increment){
+        tasbeeh.count += 1
+        console.log("After increment - Count:", tasbeeh.count); // Should see this
+    } else {
+        // Handle regular updates (title, goal)
+        if(title !== undefined) tasbeeh.title = title
+        if(goal !== undefined) tasbeeh.goal = goal
+    }
+
+    await tasbeeh.save()
+
+    return res.status(200).json({
+        success:true,
+        message:"tasbeeh updated!",
+        data : tasbeeh
     })
-}
-
-if(increment){
-    tasbeeh.count +=1
-
-}
-
-await tasbeeh.save()
-
-
-return res.status(200).json({
-    success:true,
-    message:"tasbeeh count udated!",
-    data : tasbeeh
-})
 })
 
 
